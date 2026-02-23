@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Password Security Toolkit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        h1 {
+            margin: 0;
+            color: #00b4db;
+        }
+        .user-info {
+            color: #a0c8ff;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            margin-left: 10px;
+        }
+        .tab:hover {
+            background: rgba(0, 180, 219, 0.3);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0 5px;
+            }
+            
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            nav h1 {
+                font-size: 1.5em;
+            }
+            
+            .user-info {
+                font-size: 0.9em;
+            }
+            
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 2em;
+            }
+            
+            .history-card {
+                padding: 15px;
+                overflow-x: auto;
+            }
+            
+            table {
+                font-size: 0.85em;
+            }
+            
+            th, td {
+                padding: 8px 5px;
+            }
+            
+            .quick-actions {
+                gap: 15px;
+            }
+            
+            .action-card {
+                padding: 15px;
+            }
+            
+            .action-button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            nav h1 {
+                font-size: 1.3em;
+            }
+            
+            .stat-value {
+                font-size: 1.8em;
+            }
+            
+            table {
+                font-size: 0.75em;
+            }
+            
+            th, td {
+                padding: 6px 3px;
+            }
+            
+            .strength-badge {
+                font-size: 0.7em;
+                padding: 3px 6px;
+            }
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .history-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0c8ff;
+        }
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .strength-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .excellent {
+            background: rgba(76, 175, 80, 0.2);
+            color: #a8ffa8;
+        }
+        .good {
+            background: rgba(33, 150, 243, 0.2);
+            color: #90caf9;
+        }
+        .fair {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ffcc80;
+        }
+        .weak {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ffcdd2;
+        }
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .action-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .action-button {
+            display: block;
+            background: linear-gradient(45deg, #00b4db, #0083b0);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+        .action-button:hover {
+            background: linear-gradient(45deg, #0083b0, #00b4db);
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .alert-info {
+            background: rgba(0, 180, 219, 0.1);
+            border: 1px solid #00b4db;
+            color: #a0c8ff;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #a0c8ff;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div>
+                <h1><i class="fas fa-shield-alt"></i> Dashboard</h1>
+                <p class="user-info">Welcome, {{ current_user.username }}!
+                    {% if current_user.is_admin %}
+                        <span style="color: #ff6b6b; font-weight: bold;"> (Admin)</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin_panel') }}" class="tab" style="background: rgba(255,107,107,0.3); border: 2px solid #ff6b6b;">
+                        <i class="fas fa-user-shield"></i> Admin Panel
+                    </a>
+                {% endif %}
+                <a href="{{ url_for('home') }}" class="tab">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="tab" style="background: rgba(255,0,0,0.2);">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </nav>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3><i class="fas fa-search"></i> Total Checks</h3>
+                <div class="stat-value" style="color: #00b4db;">{{ total_checks }}</div>
+                <p>Password analyses performed</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-shield"></i> Strong Passwords</h3>
+                <div class="stat-value" style="color: #4CAF50;">{{ strong_passwords }}</div>
+                <p>Good or excellent strength</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3><i class="fas fa-chart-line"></i> Security Score</h3>
+                <div class="stat-value" style="color: #9C27B0;">
+                    {% if total_checks > 0 %}
+                        {{ ((strong_passwords / total_checks) * 100)|round|int }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+                <p>Overall password strength</p>
+            </div>
+        </div>
+        
+        <!-- Password History -->
+        <div class="history-card">
+            <h2><i class="fas fa-history"></i> Recent Password Checks</h2>
+            
+            {% if history %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Strength</th>
+                            <th>Length</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for check in history %}
+                        <tr>
+                            <td>
+                                <span class="strength-badge {{ check.strength_level|lower }}">
+                                    {{ check.strength_level }}
+                                </span>
+                            </td>
+                            <td>{{ check.password_length }} chars</td>
+                            <td>{{ check.strength_score }}/6</td>
+                            <td style="color: #a0c8ff; font-size: 0.9em;">
+                                {{ check.analyzed_at.strftime('%Y-%m-%d %H:%M') }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">
+                    <i class="fas fa-info-circle" style="font-size: 3em; margin-bottom: 20px;"></i>
+                    <h3>No Password Checks Yet</h3>
+                    <p>Start analyzing passwords to see your history here.</p>
+                    <a href="{{ url_for('home') }}" class="action-button" style="display: inline-block; width: auto;">
+                        <i class="fas fa-search"></i> Check Your First Password
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="action-card">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <p style="color: #a0c8ff; font-size: 0.9em; margin-bottom: 15px;">Fast access to security tools</p>
+                <a href="{{ url_for('home') }}#check" class="action-button">
+                    <i class="fas fa-search"></i> Check Password Strength
+                </a>
+                <a href="{{ url_for('home') }}#generate" class="action-button" style="background: linear-gradient(45deg, #4CAF50, #45a049);">
+                    <i class="fas fa-key"></i> Generate Secure Password
+                </a>
+                <a href="{{ url_for('home') }}#hash" class="action-button" style="background: linear-gradient(45deg, #9C27B0, #7B1FA2);">
+                    <i class="fas fa-lock"></i> Hash Password Demo
+                </a>
+                <a href="{{ url_for('home') }}#breach" class="action-button" style="background: linear-gradient(45deg, #FF9800, #f57c00);">
+                    <i class="fas fa-shield-virus"></i> Check for Breaches
+                </a>
+            </div>
+            
+            <div class="action-card">
+                <h3><i class="fas fa-shield-alt"></i> Security Best Practices</h3>
+                <p style="color: #a0c8ff; font-size: 0.9em; margin-bottom: 15px;">Follow these tips to stay secure</p>
+                <div style="text-align: left;">
+                    <div style="padding: 10px; margin-bottom: 10px; background: rgba(76, 175, 80, 0.1); border-left: 3px solid #4CAF50; border-radius: 5px;">
+                        <strong style="color: #4CAF50;">✓ Strong Passwords</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">Use 12+ characters with uppercase, lowercase, numbers, and symbols</p>
+                    </div>
+                    <div style="padding: 10px; margin-bottom: 10px; background: rgba(33, 150, 243, 0.1); border-left: 3px solid #2196F3; border-radius: 5px;">
+                        <strong style="color: #2196F3;">✓ Unique Passwords</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">Never reuse passwords across different websites or services</p>
+                    </div>
+                    <div style="padding: 10px; margin-bottom: 10px; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #FF9800; border-radius: 5px;">
+                        <strong style="color: #FF9800;">✓ Two-Factor Auth</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">Enable 2FA on all accounts that support it for extra security</p>
+                    </div>
+                    <div style="padding: 10px; margin-bottom: 10px; background: rgba(156, 39, 176, 0.1); border-left: 3px solid #9C27B0; border-radius: 5px;">
+                        <strong style="color: #9C27B0;">✓ Password Manager</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">Use a trusted password manager to store and generate passwords</p>
+                    </div>
+                    <div style="padding: 10px; background: rgba(244, 67, 54, 0.1); border-left: 3px solid #f44336; border-radius: 5px;">
+                        <strong style="color: #f44336;">✗ Never Share</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">Don't share passwords via email, text, or messaging apps</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Additional Security Resources -->
+        <div style="background: rgba(0, 180, 219, 0.1); border: 1px solid #00b4db; border-radius: 15px; padding: 20px; margin-top: 30px;">
+            <h3 style="color: #00b4db; margin-top: 0;"><i class="fas fa-info-circle"></i> Did You Know?</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div style="padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 8px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🔐</div>
+                    <strong>Common Passwords</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">We check against 400+ commonly breached passwords</p>
+                </div>
+                <div style="padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 8px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
+                    <strong>Instant Analysis</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">Real-time password strength checking with detailed feedback</p>
+                </div>
+                <div style="padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 8px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">🛡️</div>
+                    <strong>Privacy First</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ddd;">We never store your actual passwords, only analysis results</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

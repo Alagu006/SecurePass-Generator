@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Password Security Toolkit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            color: #00b4db;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #a0c8ff;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #a0c8ff;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #00b4db;
+        }
+        button {
+            background: linear-gradient(45deg, #00b4db, #0083b0);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #0083b0, #00b4db);
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .alert-danger {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid red;
+            color: #ff9999;
+        }
+        .alert-success {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid green;
+            color: #a0ffa0;
+        }
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            color: #00b4db;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+                margin-bottom: 20px;
+            }
+            
+            input[type="text"], 
+            input[type="password"] {
+                padding: 10px 12px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 12px 15px;
+            }
+            
+            .links {
+                font-size: 0.9em;
+            }
+            
+            .links a {
+                display: inline-block;
+                margin: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.3em;
+            }
+            
+            .input-group {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1><i class="fas fa-shield-alt"></i> Login</h1>
+            <p class="subtitle">Access your password security dashboard</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="input-group">
+                    <label><i class="fas fa-user"></i> Username</label>
+                    <input type="text" name="username" required placeholder="Enter your username">
+                </div>
+                
+                <div class="input-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" name="password" required placeholder="Enter your password">
+                </div>
+                
+                <div class="input-group" style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <input type="checkbox" name="remember" id="remember" style="width: auto; margin-right: 8px;">
+                    <label for="remember" style="margin: 0; cursor: pointer;">Remember Me</label>
+                </div>
+                
+                <button type="submit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            
+            <div class="links">
+                <p><a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a></p>
+                <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+                <p><a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
